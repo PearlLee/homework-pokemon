@@ -9,6 +9,7 @@ import {
     pokemonListSelector,
 } from "@/core/state";
 import { getPokemonList } from "@/core/pokemonApi";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,9 @@ function PokemonList() {
                 <>
                     {list.contents.results.map((element) => (
                         <div key={element.name}>
-                            {element.name} {element.url}
+                            <Link href={element.name}>
+                                {element.name} {element.url}
+                            </Link>
                         </div>
                     ))}
                     {list.contents.isLoading && <div>Loading...</div>}

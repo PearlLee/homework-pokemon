@@ -1,14 +1,30 @@
-import { atom, atomFamily, noWait, selector } from "recoil";
 import {
+    atom,
+    atomFamily,
+    noWait,
+    selector,
+    selectorFamily,
+    waitForAll,
+} from "recoil";
+import {
+    getPokemonDetail,
+    getPokemonEvolutionChain,
     getPokemonList,
+    getPokemonSpecies,
+    IPokemonDetailResponse,
+    IPokemonEvolutionChainResponse,
     IPokemonListItem,
     IPokemonListResponse,
+    IPokemonSpeciesResponse,
 } from "./pokemonApi";
 
 export const PAGE_SIZE = 100;
 
 export interface IRecoilStates {
     pokemonFirstList?: IPokemonListResponse;
+    pokemonDetail?: IPokemonDetailResponse;
+    pokemonSpecies?: IPokemonSpeciesResponse;
+    pokemonEvolutionChain?: IPokemonEvolutionChainResponse;
 }
 
 export const pokemonList = atomFamily<IPokemonListResponse, number>({
@@ -55,4 +71,50 @@ export const pokemonListSelector = selector<IPokemonList>({
             isLoading: false,
         };
     },
+});
+
+export const pokemonDetail = atomFamily<IPokemonDetailResponse, string>({
+    key: "pokemonDetail",
+    default: (name: string) => getPokemonDetail(name),
+});
+
+export const pokemonSpecies = atomFamily<IPokemonSpeciesResponse, string>({
+    key: "pokemonSpecies",
+    default: (name: string) => getPokemonSpecies(name),
+});
+
+export const pokemonEvolutionChain = atomFamily<
+    IPokemonEvolutionChainResponse,
+    number
+>({
+    key: "pokemonEvolutionChain",
+    default: (id: number) => getPokemonEvolutionChain(id),
+});
+
+interface IPokemonSelector {
+    detail: IPokemonDetailResponse;
+    species: IPokemonSpeciesResponse;
+    evolutionChain: IPokemonEvolutionChainResponse;
+}
+
+export const pokemonSelector = selectorFamily<IPokemonSelector, string>({
+    key: "pokemonSelector",
+    get:
+        (name: string) =>
+        ({ get }) => {
+            const { detail, species } = get(
+                waitForAll({
+                    detail: pokemonDetail(name),
+                    species: pokemonSpecies(name),
+                })
+            );
+
+            const urls = new URL(species.evolution_chain.url).pathname
+                .split("/")
+                .filter((x) => x.length > 0);
+            const evolutionChainId = parseInt(urls[urls.length - 1]);
+            const evolutionChain = get(pokemonEvolutionChain(evolutionChainId));
+
+            return { detail, species, evolutionChain };
+        },
 });

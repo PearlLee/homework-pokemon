@@ -10,6 +10,7 @@ import {
     IPokemonSpeciesResponse,
 } from "@/core/pokemonApi";
 import { GetServerSideProps } from "next";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -61,7 +62,7 @@ export default function PokemonDetail() {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     if (params === undefined || params["pokemonName"] === undefined) {
         return {
-            props: {},
+            notFound: true,
         };
     }
 
@@ -70,24 +71,34 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         pokemonName = pokemonName[0];
     }
 
-    const pokemonDetail = await getPokemonDetail(pokemonName);
-    const pokemonSpecies = await getPokemonSpecies(pokemonName);
+    try {
+        const pokemonDetail = await getPokemonDetail(pokemonName);
+        const pokemonSpecies = await getPokemonSpecies(pokemonName);
 
-    // TODO: evolution chain url 추출하는거 리팩토링 필요
-    const urls = new URL(pokemonSpecies.evolution_chain.url).pathname
-        .split("/")
-        .filter((x) => x.length > 0);
-    const evolutionChainId = parseInt(urls[urls.length - 1]);
-    const pokemonEvolutionChain = await getPokemonEvolutionChain(
-        evolutionChainId
-    );
+        // TODO: evolution chain url 추출하는거 리팩토링 필요
+        const urls = new URL(pokemonSpecies.evolution_chain.url).pathname
+            .split("/")
+            .filter((x) => x.length > 0);
+        const evolutionChainId = parseInt(urls[urls.length - 1]);
+        const pokemonEvolutionChain = await getPokemonEvolutionChain(
+            evolutionChainId
+        );
 
-    const recoilStates: IRecoilStates = {
-        pokemonDetail,
-        pokemonSpecies,
-        pokemonEvolutionChain,
-    };
-    return {
-        props: { recoilStates },
-    };
+        const recoilStates: IRecoilStates = {
+            pokemonDetail,
+            pokemonSpecies,
+            pokemonEvolutionChain,
+        };
+        return {
+            props: { recoilStates },
+        };
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status == 404) {
+            return {
+                notFound: true,
+            };
+        }
+
+        return { props: {} };
+    }
 };

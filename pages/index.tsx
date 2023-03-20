@@ -61,14 +61,19 @@ export default function Home() {
 }
 
 export async function getServerSideProps() {
-    const pokemonFirstList = await getPokemonList(0, PAGE_SIZE);
-    const recoilStates: IRecoilStates = {
-        pokemonFirstList,
-    };
+    try {
+        const pokemonFirstList = await getPokemonList(0, PAGE_SIZE);
+        const recoilStates: IRecoilStates = {
+            pokemonFirstList,
+        };
 
-    return {
-        props: {
-            recoilStates,
-        },
-    };
+        return {
+            props: {
+                recoilStates,
+            },
+        };
+    } catch (error) {
+        // 서버에서 오류난 경우 props을 빈값으로 보내서 클라이언트에서 다시 시도하게 함
+        return { props: {} };
+    }
 }

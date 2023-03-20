@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { Inter } from "next/font/google";
+import styles from "@/styles/Detail.module.scss";
 import { useRouter } from "next/router";
 import { IRecoilStates, pokemonSelector } from "@/core/state";
 import { useRecoilValueLoadable } from "recoil";
@@ -14,6 +15,7 @@ import {
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import { getLastPath } from "@/core/util";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,21 +57,24 @@ function EvolutionChain({
     return (
         <>
             {chains.map((chain) => (
-                <ul key={chain.join("-")}>
+                <ol key={chain.join("-")}>
                     {chain.map((element) => (
                         <li key={element}>
-                            {name == element ? (
-                                <b>{element}</b>
-                            ) : (
-                                <>{element}</>
-                            )}
+                            <Link href={element}>
+                                {name == element ? (
+                                    <strong>{element}</strong>
+                                ) : (
+                                    <>{element}</>
+                                )}
+                            </Link>
                         </li>
                     ))}
-                </ul>
+                </ol>
             ))}
         </>
     );
 }
+
 function Detail({ pokemonName }: { pokemonName: string }) {
     const data = useRecoilValueLoadable(pokemonSelector(pokemonName));
 
@@ -77,21 +82,52 @@ function Detail({ pokemonName }: { pokemonName: string }) {
         case "hasValue":
             const contents = data.contents;
             return (
-                <>
-                    {getKoreanName(contents.species) || contents.detail.name}
-                    {contents.evolutionChain.id}
-
-                    <EvolutionChain
-                        name={contents.species.name}
-                        evolutionChain={contents.evolutionChain}
-                    />
-                    <picture>
-                        <img
-                            src={contents.detail.sprites.front_default}
-                            alt={contents.detail.name}
-                        />
-                    </picture>
-                </>
+                <section className={styles.containerDetail}>
+                    <div>
+                        <picture>
+                            <img
+                                src={contents.detail.sprites.front_default}
+                                onError={(e) =>
+                                    (e.currentTarget.style.display = "none")
+                                }
+                                alt={contents.detail.name}
+                            />
+                        </picture>
+                        <p>
+                            {contents.detail.name} || 종{" "}
+                            {getKoreanName(contents.species) ||
+                                contents.species.name}
+                        </p>
+                        <dl className={styles.type}>
+                            <dt>타입</dt>
+                            {contents.detail.types.map((item) => (
+                                <dd
+                                    key={item.type.name}
+                                    className={styles[item.type.name]}
+                                >
+                                    {item.type.name}
+                                </dd>
+                            ))}
+                        </dl>
+                        <dl className={styles.stat}>
+                            <dt>스탯</dt>
+                            {contents.detail.stats.map((item) => (
+                                <dd key={item.stat.name}>
+                                    {item.stat.name}: {item.base_stat}
+                                </dd>
+                            ))}
+                        </dl>
+                        <dl>
+                            <dt>진화</dt>
+                            <dd>
+                                <EvolutionChain
+                                    name={contents.species.name}
+                                    evolutionChain={contents.evolutionChain}
+                                />
+                            </dd>
+                        </dl>
+                    </div>
+                </section>
             );
         case "loading":
             return <>loading</>;
@@ -100,7 +136,7 @@ function Detail({ pokemonName }: { pokemonName: string }) {
     }
 }
 
-export default function PokemonDetail() {
+export default function PokemonPage() {
     const router = useRouter();
     let { pokemonName } = router.query;
 
@@ -109,7 +145,26 @@ export default function PokemonDetail() {
     } else if (Array.isArray(pokemonName)) {
         pokemonName = pokemonName[0];
     }
-    return <Detail pokemonName={pokemonName} />;
+    return (
+        <>
+            <Head>
+                <title>{pokemonName} - 포켓몬 도감</title>
+                <meta
+                    name="description"
+                    content={pokemonName + "포켓몬 도감"}
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+            </Head>
+
+            <Link href="/" className={styles.buttonToList}>
+                목록
+            </Link>
+            <Detail pokemonName={pokemonName} />
+        </>
+    );
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {

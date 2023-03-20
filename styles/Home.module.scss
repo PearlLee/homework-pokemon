@@ -1,0 +1,38 @@
+.main {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 6rem;
+    min-height: 100vh;
+
+    h1 {
+        margin-bottom: 2rem;
+
+        text-align: center;
+    }
+
+    .containerList {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+
+        & > div {
+            a {
+                display: block;
+                padding: 1rem;
+
+                border-radius: var(--border-radius);
+                text-align: center;
+
+                &:hover {
+                    background-color: rgba(180, 228, 255, 0.4);
+                }
+
+                dl {
+                    dt,
+                    dd {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}

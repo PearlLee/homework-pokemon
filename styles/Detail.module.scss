@@ -1,0 +1,161 @@
+.containerDetail {
+    display: flex;
+    justify-content: center;
+    padding: 4rem;
+    min-height: 100vh;
+
+    background-color: rgb(var(--detailground-rgb));
+
+    & > div {
+        width: 100%;
+        max-width: var(--max-width);
+        margin-bottom: auto;
+        padding: 4rem;
+
+        background-color: rgb(var(--baseground-rgb));
+        border-radius: var(--border-radius);
+        text-align: center;
+
+        picture {
+            display: block;
+
+            text-align: center;
+        }
+
+        ol > li {
+            display: inline-block;
+            margin: 0 0.4rem;
+        }
+
+        & > * {
+            margin: 1rem 0;
+        }
+    }
+
+    .type {
+        dd {
+            display: inline-block;
+            margin: 0 0.5rem;
+            padding: 0.2rem 0.5rem;
+
+            background-color: rgba(var(--foreground-rgb), 0.4);
+            border-radius: calc(var(--border-radius) / 2);
+            color: #fff;
+
+            &.fighting {
+                background-color: #c03028;
+            }
+
+            &.flying {
+                background-color: #a890f0;
+            }
+
+            &.poison {
+                background-color: #a890f0;
+            }
+
+            &.ground {
+                background-color: #e0c068;
+            }
+
+            &.rock {
+                background-color: #b8a038;
+            }
+
+            &.bug {
+                background-color: #a8b820;
+            }
+
+            &.ghost {
+                background-color: #705898;
+            }
+
+            &.steel {
+                background-color: #b8b8d0;
+            }
+
+            &.fire {
+                background-color: #f08030;
+            }
+
+            &.water {
+                background-color: #6890f0;
+            }
+
+            &.grass {
+                background-color: #78c850;
+            }
+
+            &.electric {
+                background-color: #f8d030;
+            }
+
+            &.psychic {
+                background-color: #f85888;
+            }
+
+            &.ice {
+                background-color: #98d8d8;
+            }
+
+            &.dragon {
+                background-color: #7038f8;
+            }
+
+            &.dark {
+                background-color: #705848;
+            }
+
+            &.fairy {
+                background-color: #ee99ac;
+            }
+
+            &.unknown {
+                background-color: #68a090;
+            }
+
+            &.shadow {
+                background-color: #000;
+            }
+        }
+    }
+
+    .stat {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(33%, auto));
+        grid-auto-flow: dense;
+
+        &,
+        dt,
+        dd {
+            border: 1px solid rgba(var(--foreground-rgb), 0.1);
+        }
+
+        dt,
+        dd {
+            padding: 0.2rem;
+        }
+
+        dt {
+            grid-column: auto / span 3;
+        }
+
+        dd {
+            padding: 0 2rem;
+            text-align: left;
+        }
+    }
+}
+
+.buttonToList {
+    position: absolute;
+    top: 1rem;
+    left: calc(50%);
+    min-width: 6rem;
+    padding: 0.5rem;
+
+    background-color: rgb(var(--baseground-rgb));
+    border-radius: calc(var(--border-radius) / 2);
+    text-align: center;
+    transform: translateX(-50%);
+}

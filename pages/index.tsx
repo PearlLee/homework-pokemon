@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
+import styles from "@/styles/Home.module.scss";
 import { useRecoilCallback, useRecoilValueLoadable } from "recoil";
 import {
     IRecoilStates,
@@ -10,6 +10,7 @@ import {
 } from "@/core/state";
 import { getPokemonList } from "@/core/pokemonApi";
 import Link from "next/link";
+import { getLastPath } from "@/core/util";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,13 +21,29 @@ function PokemonList() {
         case "hasValue":
             return (
                 <>
-                    {list.contents.results.map((element) => (
-                        <div key={element.name}>
-                            <Link href={element.name}>
-                                {element.name} {element.url}
-                            </Link>
-                        </div>
-                    ))}
+                    {list.contents.results.map((element) => {
+                        const pokemonNo = parseInt(getLastPath(element.url));
+                        return (
+                            <div key={element.name}>
+                                <Link href={element.name}>
+                                    <picture>
+                                        <img
+                                            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonNo}.png`}
+                                            onError={(e) =>
+                                                (e.currentTarget.style.display =
+                                                    "none")
+                                            }
+                                            alt={element.name}
+                                        />
+                                    </picture>
+                                    <dl>
+                                        <dt className="blind">포켓몬 이름</dt>
+                                        <dd>{element.name}</dd>
+                                    </dl>
+                                </Link>
+                            </div>
+                        );
+                    })}
                     {list.contents.isLoading && <div>Loading...</div>}
                 </>
             );
@@ -53,7 +70,11 @@ export default function Home() {
                 />
             </Head>
             <main className={styles.main}>
-                <PokemonList />
+                <h1>포켓몬 목록</h1>
+                <section className={styles.containerList}>
+                    <PokemonList />
+                </section>
+
                 <button onClick={() => nextPage()}>다음페이지</button>
             </main>
         </>

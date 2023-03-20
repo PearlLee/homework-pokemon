@@ -41,7 +41,7 @@ export interface IPokemonDetailResponse {
             url: string;
         };
     }>;
-    spacies: {
+    species: {
         name: string;
         url: string;
     };

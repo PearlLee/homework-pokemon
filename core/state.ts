@@ -103,12 +103,8 @@ export const pokemonSelector = selectorFamily<IPokemonSelector, string>({
     get:
         (name: string) =>
         ({ get }) => {
-            const { detail, species } = get(
-                waitForAll({
-                    detail: pokemonDetail(name),
-                    species: pokemonSpecies(name),
-                })
-            );
+            const detail = get(pokemonDetail(name));
+            const species = get(pokemonSpecies(detail.species.name));
 
             const evolutionChainId = parseInt(
                 getLastPath(species.evolution_chain.url)

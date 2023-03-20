@@ -126,7 +126,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     try {
         const pokemonDetail = await getPokemonDetail(pokemonName);
-        const pokemonSpecies = await getPokemonSpecies(pokemonName);
+        const pokemonSpecies = await getPokemonSpecies(
+            pokemonDetail.species.name
+        );
 
         const evolutionChainId = parseInt(
             getLastPath(pokemonSpecies.evolution_chain.url)

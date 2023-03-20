@@ -13,6 +13,7 @@ import {
 } from "@/core/pokemonApi";
 import { GetServerSideProps } from "next";
 import axios from "axios";
+import { getLastPath } from "@/core/util";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -127,11 +128,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         const pokemonDetail = await getPokemonDetail(pokemonName);
         const pokemonSpecies = await getPokemonSpecies(pokemonName);
 
-        // TODO: evolution chain url 추출하는거 리팩토링 필요
-        const urls = new URL(pokemonSpecies.evolution_chain.url).pathname
-            .split("/")
-            .filter((x) => x.length > 0);
-        const evolutionChainId = parseInt(urls[urls.length - 1]);
+        const evolutionChainId = parseInt(
+            getLastPath(pokemonSpecies.evolution_chain.url)
+        );
         const pokemonEvolutionChain = await getPokemonEvolutionChain(
             evolutionChainId
         );

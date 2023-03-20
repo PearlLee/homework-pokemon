@@ -17,6 +17,7 @@ import {
     IPokemonListResponse,
     IPokemonSpeciesResponse,
 } from "./pokemonApi";
+import { getLastPath } from "./util";
 
 export const PAGE_SIZE = 100;
 
@@ -109,10 +110,9 @@ export const pokemonSelector = selectorFamily<IPokemonSelector, string>({
                 })
             );
 
-            const urls = new URL(species.evolution_chain.url).pathname
-                .split("/")
-                .filter((x) => x.length > 0);
-            const evolutionChainId = parseInt(urls[urls.length - 1]);
+            const evolutionChainId = parseInt(
+                getLastPath(species.evolution_chain.url)
+            );
             const evolutionChain = get(pokemonEvolutionChain(evolutionChainId));
 
             return { detail, species, evolutionChain };

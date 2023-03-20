@@ -15,8 +15,14 @@
         grid-template-columns: repeat(5, 1fr);
 
         & > div {
+            &,
             a {
-                display: block;
+                height: 100%;
+            }
+            a {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
                 padding: 1rem;
 
                 border-radius: var(--border-radius);
@@ -30,6 +36,22 @@
                     dt,
                     dd {
                         text-align: center;
+                    }
+                }
+
+                picture {
+                    display: block;
+                    min-height: 96px;
+
+                    text-align: center;
+
+                    img {
+                        display: none;
+
+                        &[src] {
+                            display: inherit;
+                            margin: auto;
+                        }
                     }
                 }
             }

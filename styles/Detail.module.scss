@@ -20,6 +20,15 @@
             display: block;
 
             text-align: center;
+
+            img {
+                display: none;
+
+                &[src] {
+                    display: inherit;
+                    margin: auto;
+                }
+            }
         }
 
         ol > li {

@@ -7,6 +7,8 @@ import {
     getPokemonDetail,
     getPokemonEvolutionChain,
     getPokemonSpecies,
+    IChainLink,
+    IPokemonEvolutionChainResponse,
     IPokemonSpeciesResponse,
 } from "@/core/pokemonApi";
 import { GetServerSideProps } from "next";
@@ -22,6 +24,51 @@ function getKoreanName(species: IPokemonSpeciesResponse): string | undefined {
 
     return ko.name;
 }
+
+function getChains(
+    chain: IChainLink,
+    paths: string[][] = [],
+    currentPath: string[] = []
+) {
+    currentPath.push(chain.species.name);
+
+    if (chain.evolves_to.length == 0) {
+        paths.push(currentPath);
+    } else {
+        chain.evolves_to.forEach((subChain) => {
+            getChains(subChain, paths, [...currentPath]);
+        });
+    }
+
+    return paths;
+}
+function EvolutionChain({
+    name,
+    evolutionChain,
+}: {
+    name: string;
+    evolutionChain: IPokemonEvolutionChainResponse;
+}) {
+    let chains = getChains(evolutionChain.chain);
+
+    return (
+        <>
+            {chains.map((chain) => (
+                <ul key={chain.join("-")}>
+                    {chain.map((element) => (
+                        <li key={element}>
+                            {name == element ? (
+                                <b>{element}</b>
+                            ) : (
+                                <>{element}</>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            ))}
+        </>
+    );
+}
 function Detail({ pokemonName }: { pokemonName: string }) {
     const data = useRecoilValueLoadable(pokemonSelector(pokemonName));
 
@@ -32,6 +79,11 @@ function Detail({ pokemonName }: { pokemonName: string }) {
                 <>
                     {getKoreanName(contents.species) || contents.detail.name}
                     {contents.evolutionChain.id}
+
+                    <EvolutionChain
+                        name={contents.species.name}
+                        evolutionChain={contents.evolutionChain}
+                    />
                     <picture>
                         <img
                             src={contents.detail.sprites.front_default}

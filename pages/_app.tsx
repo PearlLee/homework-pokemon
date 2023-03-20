@@ -1,3 +1,4 @@
+import ScrollRestoration from "@/components/scrollRestoration";
 import {
     IRecoilStates,
     pokemonDetail,
@@ -43,6 +44,7 @@ const initRecoilState =
 export default function App({ Component, pageProps }: AppProps) {
     return (
         <RecoilRoot initializeState={initRecoilState(pageProps.recoilStates)}>
+            <ScrollRestoration />
             <Component {...pageProps} />
         </RecoilRoot>
     );

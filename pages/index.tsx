@@ -11,6 +11,7 @@ import {
 import { getPokemonList } from "@/core/pokemonApi";
 import Link from "next/link";
 import { getLastPath } from "@/core/util";
+import Loading from "@/components/loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,10 +56,6 @@ function PokemonList() {
 }
 
 export default function Home() {
-    const nextPage = useRecoilCallback(({ set }) => () => {
-        set(pokemonListPage, (oldValue) => oldValue + 1);
-    });
-
     return (
         <>
             <Head>
@@ -75,7 +72,7 @@ export default function Home() {
                     <PokemonList />
                 </section>
 
-                <button onClick={() => nextPage()}>다음페이지</button>
+                <Loading />
             </main>
         </>
     );
